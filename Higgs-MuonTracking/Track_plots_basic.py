@@ -3,10 +3,15 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
+do3D = True
+
 # Features of CMS detector
 B = 3.8 # Magnetic field strength, units: Tesla
 r_sol = 2.950 # Radius of solenoid volume, units: meters
 z_sol = 3.00 # Length of solenoid volume, units: meters
+
+# Tracker layers (z = 0) [units: m]
+r_layers = [0.04,0.07,0.011,0.26,0.32,0.43,0.62,0.71,0.79,0.88,0.97,1.07]
 
 # initial particle momentum
 pz = 1. # units GeV/c
@@ -22,8 +27,9 @@ phi0 = 0.
 
 # Create 2d and 3d figures and axes
 # Draw CMS detector (outline of inner surface of solenoid) in 2d and 3d
-fig3 = plt.figure(1)
-ax3 = fig3.add_subplot(111, projection='3d')
+if do3D:
+  fig3 = plt.figure(1)
+  ax3 = fig3.add_subplot(111, projection='3d')
 fig2 = plt.figure(2)
 ax2 = fig2.add_subplot(111)
 x=np.linspace(-r_sol, r_sol, 100)
@@ -31,14 +37,15 @@ z=np.linspace(-z_sol, z_sol, 100)
 Xc, Zc=np.meshgrid(x, z)
 Yc = np.sqrt(r_sol**2-Xc**2)
 y = np.sqrt(r_sol**2-x**2)
-ax3.plot_surface(Xc, Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
-ax3.plot_surface(Xc, -Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
-ax3.set_xlabel("X [m]")
-ax3.set_ylabel("Y [m]")
-ax3.set_zlabel("Z [m]")
-ax3.set_xlim3d(-3.2,3.2)
-ax3.set_ylim3d(-3.2,3.2)
-ax3.set_zlim3d(-3.2,3.2)
+if do3D:
+  ax3.plot_surface(Xc, Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
+  ax3.plot_surface(Xc, -Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
+  ax3.set_xlabel("X [m]")
+  ax3.set_ylabel("Y [m]")
+  ax3.set_zlabel("Z [m]")
+  ax3.set_xlim3d(-3.2,3.2)
+  ax3.set_ylim3d(-3.2,3.2)
+  ax3.set_zlim3d(-3.2,3.2)
 ax2.set_xlabel("X [m]")
 ax2.set_ylabel("Y [m]")
 ax2.set_xlim(-3.2,3.2)
@@ -56,14 +63,23 @@ Rc = pt / (0.3*B) # units: meters
 ldip = np.arctan(pz/pt)
 
 # Create parameters of helix
-s = np.linspace(0, 0 + 1 * np.pi, 1000)
+s = np.linspace(0, 0 + 1 * np.pi, 100000)
 z = s*np.sin(ldip) + z0
 x = x0 + Rc*(np.cos(phi0+s*np.cos(ldip)/Rc) - np.cos(phi0))
 y = y0 + Rc*(np.sin(phi0+s*np.cos(ldip)/Rc) - np.sin(phi0))
 
+xhit = []
+yhit = []
+zhit = []
+
 # don't plot helix beyond tracker volume
 r = np.sqrt(x*x+y*y)
 for i in range(len(r)):
+  for rl in r_layers:
+    if i>0 and r[i] > rl and r[i-1] < rl:
+      xhit.append(0.5*(x[i]+x[i-1]))
+      yhit.append(0.5*(y[i]+y[i-1]))
+      zhit.append(0.5*(z[i]+z[i-1]))
   if r[i] > r_sol or abs(z[i]) > z_sol:
     print "Truncating at %ith point which has (r,z)=(%f,%f) (x,y)=(%f,%f) z/r=%f pz/pt=%f Rc=%f" % (i,r[i],z[i],x[i],y[i],z[i]/r[i],pz/pt,Rc)
     x=x[:i]
@@ -71,10 +87,12 @@ for i in range(len(r)):
     z=z[:i]
     break
 
-# Plot the helix
-ax3.plot(x,y,z, label='Particle path', color='r')
+# Plot the helix and hits
+if do3D: ax3.plot(x,y,z, label='Particle path', color='r')
+if do3D: ax3.plot(xhit,yhit,zhit, label="Tracker hit (unsmeared)",color='r',marker='o',linestyle="none")
 ax2.plot(x,y,label='Particle path',color='r')
-ax2.legend()
+ax2.plot(np.array(xhit),np.array(yhit),label="Tracker hit (unsmeared)",color='r',marker='o',linestyle="none")
+ax2.legend(numpoints=1)
 
 # Show the figures we've made
 plt.show()
