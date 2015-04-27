@@ -1,4 +1,4 @@
 Useful links
 ============
 
-* Fitting example: http://wiki.scipy.org/Cookbook/FittingData
+* Fitting examples: http://wiki.scipy.org/Cookbook/FittingData
