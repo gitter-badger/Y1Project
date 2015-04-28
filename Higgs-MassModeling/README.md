@@ -1,6 +1,7 @@
-Higgs Boson Mass Modeling at LHC
-================================
+## Higgs Boson Mass Modeling at LHC ##
 
 * [Original project description](description.md)
 
-* [Useful links](links.md)
+* [Additional useful links](links.md)
+
+* [Starting example script](Higgs_fit_basic.py)
