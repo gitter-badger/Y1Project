@@ -18,7 +18,7 @@ z_sol = 3.00 # Length of solenoid volume, units: meters
 # Tracker layers (z = 0) [units: m]
 # These are approximate and read from http://www.hephy.at/user/friedl/diss/html/node26.html
 # You can see there that the layout is rather complicated, but let's keep things simple for now
-r_layers = [0.04,0.07,0.011,0.26,0.32,0.43,0.62,0.71,0.79,0.88,0.97,1.07]
+r_layers = [0.04,0.07,0.11,0.26,0.32,0.43,0.62,0.71,0.79,0.88,0.97,1.07]
 
 # initial particle momentum
 pz = 1. # units GeV/c
