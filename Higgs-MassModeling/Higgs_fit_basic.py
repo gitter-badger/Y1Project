@@ -1,10 +1,14 @@
+# S. Zenz, Imperial College
+# April 2015
+# A starting script to fit a simulated Higgs boson lineshape ("pseudodata")
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-# If random seed set to None, non-reproducible result
-seedval = None
+# If random seed set to None, random seed set at rantime so result is non-reproducible
+#seedval = None
 
-# Set value to get reproducible successful example
+# Set value to get reproducible successful example (if parameters of script unchanged)
 seedval = 54321
 
 # Set value to get reproducible example of failure

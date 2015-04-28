@@ -1,8 +1,13 @@
+# S. Zenz, Imperial College
+# April 2015
+# A starting script to draw the CMS solenoid in 2d and 3d and plot a track and hits
+
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Set to false to skip making 3D plot
 do3D = True
 
 # Features of CMS detector
@@ -11,6 +16,8 @@ r_sol = 2.950 # Radius of solenoid volume, units: meters
 z_sol = 3.00 # Length of solenoid volume, units: meters
 
 # Tracker layers (z = 0) [units: m]
+# These are approximate and read from http://www.hephy.at/user/friedl/diss/html/node26.html
+# You can see there that the layout is rather complicated, but let's keep things simple for now
 r_layers = [0.04,0.07,0.011,0.26,0.32,0.43,0.62,0.71,0.79,0.88,0.97,1.07]
 
 # initial particle momentum
@@ -25,33 +32,40 @@ z0 = 0. # units: meters
 # initial angle in x-y plane
 phi0 = 0.
 
-# Create 2d and 3d figures and axes
-# Draw CMS detector (outline of inner surface of solenoid) in 2d and 3d
+# Create 3D axes
 if do3D:
   fig3 = plt.figure(1)
   ax3 = fig3.add_subplot(111, projection='3d')
-fig2 = plt.figure(2)
-ax2 = fig2.add_subplot(111)
-x=np.linspace(-r_sol, r_sol, 100)
-z=np.linspace(-z_sol, z_sol, 100)
-Xc, Zc=np.meshgrid(x, z)
-Yc = np.sqrt(r_sol**2-Xc**2)
-y = np.sqrt(r_sol**2-x**2)
-if do3D:
-  ax3.plot_surface(Xc, Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
-  ax3.plot_surface(Xc, -Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
   ax3.set_xlabel("X [m]")
   ax3.set_ylabel("Y [m]")
   ax3.set_zlabel("Z [m]")
   ax3.set_xlim3d(-3.2,3.2)
   ax3.set_ylim3d(-3.2,3.2)
   ax3.set_zlim3d(-3.2,3.2)
+
+# Create 2d axes
+fig2 = plt.figure(2)
+ax2 = fig2.add_subplot(111)
 ax2.set_xlabel("X [m]")
 ax2.set_ylabel("Y [m]")
 ax2.set_xlim(-3.2,3.2)
 ax2.set_ylim(-3.2,3.2)
+
+# Create solenoid points
+x=np.linspace(-r_sol, r_sol, 100)
+z=np.linspace(-z_sol, z_sol, 100)
+Xc, Zc=np.meshgrid(x, z)
+Yc = np.sqrt(r_sol**2-Xc**2)
+y = np.sqrt(r_sol**2-x**2)
+
+# Plot solenoid points in 2d
 ax2.plot(x,y,color='b',label='CMS solenoid')
 ax2.plot(x,-y,color='b')
+
+# Plot solenoid points as mesh in 3d
+if do3D:
+  ax3.plot_surface(Xc, Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
+  ax3.plot_surface(Xc, -Yc, Zc,  rstride=4, cstride=4, color='b', alpha=0.2)
 
 # Derivactions of motion in magnetic field and helix parameterization
 # http://www.physics.iitm.ac.in/~sercehep2013/track2_Gagan_Mohanty.pdf
